@@ -29,8 +29,8 @@ void main() {
 	etoile(pdf, 200, 200, PDF.FILL_STROKE);
 	etoile(pdf, 400, 200, PDF.FILL);
 
-	var image1 = pdf.loadImage("../chabenet.jpg");
-	var image2 = pdf.loadImage("../chabenet.png");
+	var image1 = pdf.loadImage("chabenet.jpg");
+	var image2 = pdf.loadImage("chabenet.png");
 
 	pdf.imageTo(image1, 50, 650,
 		"boxsize={200 150} position={center} fitmethod=meet showborder");

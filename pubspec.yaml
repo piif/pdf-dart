@@ -1,0 +1,5 @@
+name: pdfdart
+version: 0.1.0
+author: piif
+description: Dart binding for PDFlib
+homepage: https://github.com/piif/pdf-dart

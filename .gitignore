@@ -7,3 +7,7 @@
 
 # example output
 hello.pdf
+
+# auto "packages" dirs and lock files for dart
+packages
+pubspec.lock

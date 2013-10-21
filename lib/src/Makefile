@@ -7,7 +7,7 @@ CFLAGS=-I${PDFLIB_DIR}/include -I/usr/local/dart/dart-sdk
 LDFLAGS=-L${PDFLIB_DIR}/lib64 -lpdf -lm
 
 libpdflib.so: pdflib.o
-	gcc -shared -Wl,-soname,libpdflib.so -o libpdflib.so pdflib.o ${LDFLAGS}
+	gcc -shared -Wl,-soname,libpdflib.so -o ../libpdflib.so pdflib.o ${LDFLAGS}
 
 pdflib.o: pdflib.cpp
 	g++ -g -Wall -fPIC ${CFLAGS} -c pdflib.cpp

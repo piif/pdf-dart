@@ -3,3 +3,7 @@ version: 0.1.0
 author: piif
 description: example code for pdfdart
 homepage: https://github.com/piif/pdf-dart
+dependencies:
+  pdfdart:
+    version: any
+    path: /home/pif/GitHub/pdf-dart

@@ -11,3 +11,6 @@ libpdflib.so: pdflib.o
 
 pdflib.o: pdflib.cpp
 	g++ -g -Wall -fPIC ${CFLAGS} -c pdflib.cpp
+
+clean:
+	rm *.o *.so

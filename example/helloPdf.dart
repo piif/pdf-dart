@@ -1,5 +1,5 @@
 
-import 'package:pdfdart/pdflib.dart';
+import 'package:pdfdart/pdfdart.dart';
 
 void main() {
     PDF pdf = new PDF("hello.pdf");

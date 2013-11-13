@@ -19,10 +19,9 @@ DART_EXPORT Dart_Handle name##_Init(Dart_Handle parent_library) {	\
 }
 
 #define BEGIN_ASYNC_FUNCTION(name) 								\
-	void name##Handler(Dart_Port dest_port_id,					\
-		Dart_Port reply_port_id,								\
+	void name##Handler(Dart_Port reply_port_id,					\
 		Dart_CObject* message);									\
-	void name(Dart_NativeArguments arguments) { 	\
+	void name(Dart_NativeArguments arguments) {					\
 	  Dart_SetReturnValue(arguments, Dart_Null());				\
 	  Dart_Port service_port =									\
 		  Dart_NewNativePort(#name, name##Handler, true);		\
@@ -31,15 +30,20 @@ DART_EXPORT Dart_Handle name##_Init(Dart_Handle parent_library) {	\
 		Dart_SetReturnValue(arguments, send_port);				\
 	  }															\
 	}															\
-	void name##Handler(Dart_Port dest_port_id,					\
-			Dart_Port reply_port_id,							\
+	void name##Handler(Dart_Port send_port_id,					\
 			Dart_CObject* message) {							\
-		Dart_CObject result;
+		Dart_Port reply_port_id = message->value.as_array		\
+			.values[0]->value.as_send_port;						\
+		Dart_CObject result;									\
+		int argc = message->value.as_array.length - 1;			\
+		Dart_CObject** argv = message->value.as_array.values + 1;
 
 
 #define END_ASYNC_FUNCTION(name) 					\
 	endAsyncFunc:									\
+printf("send\n"); \
 		Dart_PostCObject(reply_port_id, &result);	\
+printf("sent\n"); \
 	}
 
 #define RETURN_ASYNC_FUNCTION goto endAsyncFunc

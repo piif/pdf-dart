@@ -32,7 +32,12 @@ class PDF {
 	 * prepare new PDF document
 	 */
 	PDF(String filename, [ String options = "" ]) {
-		f = _servicePort.call(["create", filename, options]).then((List result) {
+		ReceivePort response = new ReceivePort();
+
+		_servicePort.send([response.sendPort, "create", filename, options]);
+		print("create ...");
+		f = response.first.then((List result) {
+			print("create");
 			if (result[0] == null) {
 				handle = result[1];
 			} else {
@@ -48,7 +53,9 @@ class PDF {
 	 */
 	void delete() {
 		f = f.then((_) {
-			return _servicePort.call(["delete", handle]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "delete", handle]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
@@ -64,7 +71,9 @@ class PDF {
 	 */
 	void close() {
 		f = f.then((_) {
-			return _servicePort.call(["close", handle]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "close", handle]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
@@ -85,7 +94,9 @@ class PDF {
 
 	Future loadFont(String fontName, [ String options = "" ]) {
 		return f.then((_) {
-			return _servicePort.call(["loadFont", handle, fontName, options]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "loadFont", handle, fontName, options]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
@@ -100,7 +111,9 @@ class PDF {
 	void setFont(Future<int> font, int size) {
 		f = Future.wait([font, f]).then((List responses) {
 			int fontHandle = responses[0];
-			return _servicePort.call(["setFont", handle, fontHandle, size]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "setFont", handle, fontHandle, size]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
@@ -161,7 +174,9 @@ class PDF {
 
 	Future loadImage(String imagePath, [ String options = "" ]) {
 		return f.then((_) {
-			return _servicePort.call(["loadImage", handle, imagePath, options]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "loadImage", handle, imagePath, options]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : ${result[0]}");
@@ -176,7 +191,9 @@ class PDF {
 	void imageTo(Future<int> image, num x, num y,  [ String options = "" ]) {
 		f = Future.wait([image, f]).then((List responses) {
 			int imageHandle = responses[0];
-			return _servicePort.call(["imageTo", handle, imageHandle, x, y, options]);
+			ReceivePort response = new ReceivePort();
+			_servicePort.send([response.sendPort, "imageTo", handle, imageHandle, x, y, options]);
+			return response.first;
 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
@@ -192,13 +209,15 @@ class PDF {
 
 	void _doCall(String command, [ List args = null ]) {
 		f = f.then((_) {
-//			print("calling ${command}");
-			List callArgs = [ command, handle ];
+			print("calling ${command}");
+			ReceivePort response = new ReceivePort();
+			List callArgs = [response.sendPort, command, handle ];
 			if (args != null) {
 				callArgs.addAll(args);
 			}
-			return _servicePort.call(callArgs);
-		}).then((List result) {
+			_servicePort.send(callArgs);
+			return response.first;
+ 		}).then((List result) {
 			if (result[0] != null) {
 				throw new Exception("failed : " + result[0]);
 			}

@@ -1,4 +1,4 @@
-
+import 'dart:math';
 import 'package:pdfdart/pdfdart.dart';
 
 void main() {
@@ -31,10 +31,33 @@ void main() {
 	pdf.textTo("\nsome text é, €, 漫畫画");
 	pdf.textTo("\nsome stars ...");
 
-	etoile(pdf, 200, 400, PDF.FILL | PDF.CLOSE);
-	etoile(pdf, 400, 400, PDF.STROKE | PDF.CLOSE);
-	etoile(pdf, 200, 200, PDF.FILL_STROKE);
-	etoile(pdf, 400, 200, PDF.FILL);
+	etoile(pdf, 100, 400, PDF.FILL);
+	etoile(pdf, 300, 400, PDF.STROKE | PDF.CLOSE);
+	etoile(pdf, 500, 400, PDF.FILL_STROKE);
+
+	pdf..circle(100, 200, 50)
+		..terminatePath(PDF.STROKE);
+	pdf..circle(100, 200, 30)
+		..terminatePath(PDF.FILL);
+
+	pdf..arc(300, 200, 50, 30, 180)
+		..terminatePath(PDF.FILL_STROKE);
+	pdf..arc(300, 200, 50, 210, 0)
+		..terminatePath(PDF.STROKE | PDF.CLOSE);
+
+	num yy = sin(PI/3);
+	var rosace = [
+		[ -1, 0, -60, 60 ],
+		[ 1, 0, 120, 240 ],
+		[ -0.5, yy, -120, 0 ],
+		[ 0.5, yy, 180, -60 ],
+		[ -0.5, -yy, 0, 120 ],
+		[ 0.5, -yy, 60, 180 ]
+	];
+	rosace.forEach((List<num> r) {
+		pdf..arc(500 + r[0]*50, 200 + r[1]*50, 50, r[2], r[3])
+			..terminatePath(PDF.STROKE);
+	});
 
 	var image1 = pdf.loadImage("chabenet.jpg");
 	var image2 = pdf.loadImage("chabenet.png");
@@ -50,7 +73,7 @@ void main() {
 }
 
 void etoile(PDF pdf, num x, num y, what) {
-pdf..save()
+	pdf..save()
 		..translate(x, y)
 		..moveTo(0, 100)
 		..lineTo(40, -80)

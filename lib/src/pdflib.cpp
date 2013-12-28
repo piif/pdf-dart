@@ -447,9 +447,39 @@ printf("text '%s' -> %lu bytes", text, strlen(text));
 			SET_ERROR(PDF_get_errmsg(pdf));
 		}
 
-// TODO : PDF_circle(PDF *p, double x, double y, double r);
-// TODO : PDF_arc(PDF *p, double x, double y, double r, double alpha, double beta);/* counterclockwise  */
-// TODO : PDF_arcn(PDF *p, double x, double y, double r, double alpha, double beta);/* clockwise */
+	} else if (strcmp("circle", name) == 0) {
+		if (argc != 4) {
+			SET_ERROR("circle: handle, x, y, r expected");
+			RETURN_ASYNC_FUNCTION;
+		}
+		PDF *pdf = getPdf(argv[0]);
+		GET_DOUBLE(x, argv[1]);
+		GET_DOUBLE(y, argv[2]);
+		GET_DOUBLE(r, argv[3]);
+
+		PDF_TRY(pdf) {
+			PDF_circle(pdf, x, y, r);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
+
+	} else if (strcmp("arc", name) == 0) {
+		if (argc != 6) {
+			SET_ERROR("arc: handle, x, y, r, alpha, beta expected");
+			RETURN_ASYNC_FUNCTION;
+		}
+		PDF *pdf = getPdf(argv[0]);
+		GET_DOUBLE(x, argv[1]);
+		GET_DOUBLE(y, argv[2]);
+		GET_DOUBLE(r, argv[3]);
+		GET_DOUBLE(alpha, argv[4]);
+		GET_DOUBLE(beta, argv[5]);
+
+		PDF_TRY(pdf) {
+			PDF_arc(pdf, x, y, r, alpha, beta);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("terminatePath", name) == 0) {
 		if (argc != 2) {

@@ -172,6 +172,14 @@ class PDF {
 		_doCall("curveTo", [x1, y1, x2, y2, x3, y3]);
 	}
 
+	void circle(num x, num y, num r) {
+		_doCall("circle", [x, y, r]);
+	}
+
+	void arc(num x, num y, num r, num alpha, num beta) {
+		_doCall("arc", [x, y, r, alpha, beta]);
+	}
+
 	Future loadImage(String imagePath, [ String options = "" ]) {
 		return f.then((_) {
 			ReceivePort response = new ReceivePort();

@@ -14,10 +14,10 @@ PDF *instances[MAX_PDF] = { 0, };
 	PDF_TRY(pdf)
 #define LIBPDF_CATCH(pdf) \
 	PDF_CATCH(pdf) { \
-    	BEGIN_THROW("PDFlib exception"); \
-        PDF_delete(pdf); \
+		BEGIN_THROW("PDFlib exception"); \
+		PDF_delete(pdf); \
 		END_THROW \
-    }
+	}
 
 Dart_CObject *_currentResult = NULL;
 
@@ -90,9 +90,9 @@ int create(char *filename, char *options) {
 	}
 	instances[i] = pdf;
 
-    PDF_TRY(pdf) {
+	PDF_TRY(pdf) {
 #if PDFLIB_MAJORVERSION < 9
-    	PDF_set_parameter(pdf, "hypertextencoding", "host");
+		PDF_set_parameter(pdf, "hypertextencoding", "host");
 #else
 		PDF_set_option(pdf, "errorpolicy=return");
 #endif
@@ -102,12 +102,12 @@ int create(char *filename, char *options) {
 			instances[i] = 0;
 			return -1;
 		}
-    } PDF_CATCH(pdf) {
-    	SET_ERROR(PDF_get_errmsg(pdf));
+	} PDF_CATCH(pdf) {
+		SET_ERROR(PDF_get_errmsg(pdf));
 		PDF_delete(pdf);
 		instances[i] = 0;
 		return -1;
-    }
+	}
 
 	return i;
 }
@@ -127,6 +127,14 @@ int abort(Dart_CObject *handle) {
 	instances[i] = 0;
 	return 0;
 }
+
+void getVersion(Dart_NativeArguments arguments) {
+  Dart_EnterScope();
+  Dart_Handle result = Dart_NewInteger(PDFLIB_MAJORVERSION);
+  Dart_SetReturnValue(arguments, result);
+  Dart_ExitScope();
+}
+
 
 /**
  * entry point for all functions
@@ -153,7 +161,6 @@ BEGIN_ASYNC_FUNCTION(pdflibServicePort) {
 	argv++; argc--;
 
 	if (strcmp("create", name) == 0) {
-printf("create...\n");
 		if (argc != 2) {
 			SET_ERROR("create : filename, options expected");
 			RETURN_ASYNC_FUNCTION;
@@ -180,11 +187,11 @@ printf("create...\n");
 		}
 		PDF *pdf = getPdf(argv[0]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_end_document(pdf, "");
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_end_document(pdf, "");
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 		abort(argv[0]);
 
 	} else if (strcmp("setInfo", name) == 0) {
@@ -267,7 +274,7 @@ printf("create...\n");
 			}
 		} else {
 			GET_STRING(text, argv[1]);
-
+printf("text '%s' -> %lu bytes", text, strlen(text));
 			if (argv[2]->type == Dart_CObject_kNull) {
 				// pos null => show / continue
 				PDF_TRY(pdf) {
@@ -299,11 +306,11 @@ printf("create...\n");
 		}
 		PDF *pdf = getPdf(argv[0]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_end_page_ext(pdf, "");
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_end_page_ext(pdf, "");
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("save", name) == 0) {
 		if (argc != 1) {
@@ -312,11 +319,11 @@ printf("create...\n");
 		}
 		PDF *pdf = getPdf(argv[0]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_save(pdf);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_save(pdf);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("restore", name) == 0) {
 		if (argc != 1) {
@@ -325,11 +332,11 @@ printf("create...\n");
 		}
 		PDF *pdf = getPdf(argv[0]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_restore(pdf);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_restore(pdf);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("translate", name) == 0) {
 		if (argc != 3) {
@@ -340,11 +347,11 @@ printf("create...\n");
 		GET_DOUBLE(x, argv[1]);
 		GET_DOUBLE(y, argv[2]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_translate(pdf, x, y);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_translate(pdf, x, y);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("rotate", name) == 0) {
 		if (argc != 2) {
@@ -354,11 +361,11 @@ printf("create...\n");
 		PDF *pdf = getPdf(argv[0]);
 		GET_DOUBLE(angle, argv[1]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_rotate(pdf, angle);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_rotate(pdf, angle);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("setLineWidth", name) == 0) {
 		if (argc != 2) {
@@ -368,11 +375,11 @@ printf("create...\n");
 		PDF *pdf = getPdf(argv[0]);
 		GET_DOUBLE(lineWidth, argv[1]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_setlinewidth(pdf, lineWidth);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_setlinewidth(pdf, lineWidth);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("setColor", name) == 0) {
 		if (argc != 5) {
@@ -385,11 +392,11 @@ printf("create...\n");
 		GET_DOUBLE(g, argv[3]);
 		GET_DOUBLE(b, argv[4]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_setcolor(pdf, kind, "rgb", r, g, b, 0);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_setcolor(pdf, kind, "rgb", r, g, b, 0);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("moveTo", name) == 0) {
 		if (argc != 3) {
@@ -400,11 +407,11 @@ printf("create...\n");
 		GET_DOUBLE(x, argv[1]);
 		GET_DOUBLE(y, argv[2]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_moveto(pdf, x, y);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_moveto(pdf, x, y);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("lineTo", name) == 0) {
 		if (argc != 3) {
@@ -415,11 +422,11 @@ printf("create...\n");
 		GET_DOUBLE(x, argv[1]);
 		GET_DOUBLE(y, argv[2]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_lineto(pdf, x, y);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_lineto(pdf, x, y);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("curveTo", name) == 0) {
 		if (argc != 7) {
@@ -434,11 +441,15 @@ printf("create...\n");
 		GET_DOUBLE(x3, argv[5]);
 		GET_DOUBLE(y3, argv[6]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_curveto(pdf, x1, y1, x2, y2, x3, y3);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_curveto(pdf, x1, y1, x2, y2, x3, y3);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
+
+// TODO : PDF_circle(PDF *p, double x, double y, double r);
+// TODO : PDF_arc(PDF *p, double x, double y, double r, double alpha, double beta);/* counterclockwise  */
+// TODO : PDF_arcn(PDF *p, double x, double y, double r, double alpha, double beta);/* clockwise */
 
 	} else if (strcmp("terminatePath", name) == 0) {
 		if (argc != 2) {
@@ -448,27 +459,24 @@ printf("create...\n");
 		PDF *pdf = getPdf(argv[0]);
 		GET_INT(what, argv[1]);
 
-	    PDF_TRY(pdf) {
-	    	if (what & 4) {
-	    		PDF_closepath(pdf);
-	    	}
-	    	switch(what & 3) {
-	    	case 1:
-	    		PDF_stroke(pdf);
-	    		break;
-	    	case 2:
-	    		PDF_fill(pdf);
-	    		break;
-	    	case 3:
-	    		PDF_fill_stroke(pdf);
-	    		break;
-	    	}
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
-
-//	    PDF_load_image(p, "auto", imagefile, 0, "");
-//	    PDF_fit_image(PDF *p, int image, double x, double y, const char *optlist);
+		PDF_TRY(pdf) {
+			if (what & 4) {
+				PDF_closepath(pdf);
+			}
+			switch(what & 3) {
+			case 1:
+				PDF_stroke(pdf);
+				break;
+			case 2:
+				PDF_fill(pdf);
+				break;
+			case 3:
+				PDF_fill_stroke(pdf);
+				break;
+			}
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else if (strcmp("loadImage", name) == 0) {
 		if (argc != 3) {
@@ -501,11 +509,32 @@ printf("create...\n");
 		GET_DOUBLE(y, argv[3]);
 		GET_STRING(options, argv[4]);
 
-	    PDF_TRY(pdf) {
-	    	PDF_fit_image(pdf, imageHandle, x, y, options);
-	    } PDF_CATCH(pdf) {
-	    	SET_ERROR(PDF_get_errmsg(pdf));
-	    }
+		PDF_TRY(pdf) {
+			PDF_fit_image(pdf, imageHandle, x, y, options);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
+
+	} else if (strcmp("setOption", name) == 0) {
+		if (argc != 3) {
+			SET_ERROR("setOption : handle, key, value expected");
+			RETURN_ASYNC_FUNCTION;
+		}
+		PDF *pdf = getPdf(argv[0]);
+		GET_STRING(key, argv[1]);
+		GET_STRING(value, argv[2]);
+
+		PDF_TRY(pdf) {
+#if PDFLIB_MAJORVERSION < 9
+			PDF_set_parameter(pdf, key, value);
+#else
+			char opt[200];
+			snprintf(opt, 200, "%s=%s", key, value);
+			PDF_set_option(pdf, opt);
+#endif
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
 
 	} else {
 		SET_ERROR("unknown command");
@@ -515,5 +544,6 @@ printf("create...\n");
 } END_ASYNC_FUNCTION(newPdfServicePort)
 
 BEGIN_NAMES
+ADD_NAME(getVersion)
 ADD_NAME(pdflibServicePort)
 END_NAMES

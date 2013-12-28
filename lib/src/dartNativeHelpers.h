@@ -41,9 +41,7 @@ DART_EXPORT Dart_Handle name##_Init(Dart_Handle parent_library) {	\
 
 #define END_ASYNC_FUNCTION(name) 					\
 	endAsyncFunc:									\
-printf("send\n"); \
 		Dart_PostCObject(reply_port_id, &result);	\
-printf("sent\n"); \
 	}
 
 #define RETURN_ASYNC_FUNCTION goto endAsyncFunc

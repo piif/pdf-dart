@@ -35,9 +35,9 @@ class PDF {
 		ReceivePort response = new ReceivePort();
 
 		_servicePort.send([response.sendPort, "create", filename, options]);
-		print("create ...");
+//		print("create ...");
 		f = response.first.then((List result) {
-			print("create");
+//			print("create");
 			if (result[0] == null) {
 				handle = result[1];
 			} else {
@@ -203,13 +203,17 @@ class PDF {
 		});
 	}
 
+	void setOption(String key, String value) {
+		_doCall("setOption", [key, value]);
+	}
+
 	void terminatePath(int what) {
 		_doCall("terminatePath", [what]);
 	}
 
 	void _doCall(String command, [ List args = null ]) {
 		f = f.then((_) {
-			print("calling ${command}");
+//			print("calling ${command}");
 			ReceivePort response = new ReceivePort();
 			List callArgs = [response.sendPort, command, handle ];
 			if (args != null) {
@@ -223,7 +227,7 @@ class PDF {
 			}
 		}).catchError((e){
 			print("exception on ${command} : ${e}");
-		});	
+		});
 	}
 
 	static SendPort _port;
@@ -233,5 +237,6 @@ class PDF {
 		}
 		return _port;
 	}
-	SendPort _newServicePort() native "pdflibServicePort";
+	static SendPort _newServicePort() native "pdflibServicePort";
+	static num getVersion() native "getVersion";
 }

@@ -3,6 +3,11 @@ import 'package:pdfdart/pdfdart.dart';
 
 void main() {
     PDF pdf = new PDF("hello.pdf");
+	if(PDF.getVersion() < 9) {
+		pdf.setOption("textformat", "utf8");
+	} else {
+		pdf.setOption("stringformat", "utf8");
+	}
 
 	pdf.setInfo("Creator", "helloPdf.dart");
 	pdf.setInfo("Author", "Christian Lefebvre");
@@ -23,6 +28,7 @@ void main() {
 	pdf.setLineWidth(2.0);
 	pdf.setColor("stroke", 1.0, 0.2, 0.2);
 	pdf.setColor("fill", 0.0, 0.85, 0.85);
+	pdf.textTo("\nsome text é, €, 漫畫画");
 	pdf.textTo("\nsome stars ...");
 
 	etoile(pdf, 200, 400, PDF.FILL | PDF.CLOSE);

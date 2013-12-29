@@ -176,8 +176,8 @@ class PDF {
 		_doCall("circle", [x, y, r]);
 	}
 
-	void arc(num x, num y, num r, num alpha, num beta) {
-		_doCall("arc", [x, y, r, alpha, beta]);
+	void arc(num x, num y, num r, num alpha, num beta, [ bool clockwise = false ]) {
+		_doCall("arc", [x, y, r, alpha, beta, clockwise]);
 	}
 
 	Future loadImage(String imagePath, [ String options = "" ]) {

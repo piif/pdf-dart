@@ -46,6 +46,13 @@ Dart_CObject *_currentResult = NULL;
 	}												\
 	int _var = _object->value.as_int32;
 
+#define GET_BOOL(_var, _object)					\
+	if (_object->type != Dart_CObject_kBool) {		\
+		SET_ERROR(#_var " should be a boolean");	\
+		RETURN_ASYNC_FUNCTION;						\
+	}												\
+	bool _var = _object->value.as_bool;
+
 #define GET_DOUBLE(_var, _object)							\
 	if (_object->type != Dart_CObject_kInt32				\
 		&& _object->type != Dart_CObject_kDouble) {			\
@@ -274,7 +281,6 @@ BEGIN_ASYNC_FUNCTION(pdflibServicePort) {
 			}
 		} else {
 			GET_STRING(text, argv[1]);
-printf("text '%s' -> %lu bytes", text, strlen(text));
 			if (argv[2]->type == Dart_CObject_kNull) {
 				// pos null => show / continue
 				PDF_TRY(pdf) {
@@ -464,8 +470,8 @@ printf("text '%s' -> %lu bytes", text, strlen(text));
 		}
 
 	} else if (strcmp("arc", name) == 0) {
-		if (argc != 6) {
-			SET_ERROR("arc: handle, x, y, r, alpha, beta expected");
+		if (argc != 7) {
+			SET_ERROR("arc: handle, x, y, r, alpha, beta, clockwise expected");
 			RETURN_ASYNC_FUNCTION;
 		}
 		PDF *pdf = getPdf(argv[0]);
@@ -474,9 +480,14 @@ printf("text '%s' -> %lu bytes", text, strlen(text));
 		GET_DOUBLE(r, argv[3]);
 		GET_DOUBLE(alpha, argv[4]);
 		GET_DOUBLE(beta, argv[5]);
+		GET_BOOL(clockwise, argv[6]);
 
 		PDF_TRY(pdf) {
-			PDF_arc(pdf, x, y, r, alpha, beta);
+			if(clockwise) {
+				PDF_arcn(pdf, x, y, r, alpha, beta);
+			} else {
+				PDF_arc(pdf, x, y, r, alpha, beta);
+			}
 		} PDF_CATCH(pdf) {
 			SET_ERROR(PDF_get_errmsg(pdf));
 		}

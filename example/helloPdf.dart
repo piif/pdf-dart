@@ -46,18 +46,28 @@ void main() {
 		..terminatePath(PDF.STROKE | PDF.CLOSE);
 
 	num yy = sin(PI/3);
-	var rosace = [
+
+	rosace(pdf, 500, 200, 50, [
+		[ 0, -1, 30, 150 ],
+		[ -yy, 0.5, -90, 30 ],
+		[ yy, 0.5, 150, -90 ]
+	], PDF.STROKE);
+	rosace(pdf, 500, 200, 50, [
+		[ 0, 1, -150, -30 ],
+		[ yy, -0.5, 90, 210 ],
+		[ -yy, -0.5, -30, 90 ]
+	], PDF.STROKE);
+
+	rosace(pdf, 500, 200, 50, [
 		[ -1, 0, -60, 60 ],
-		[ 1, 0, 120, 240 ],
-		[ -0.5, yy, -120, 0 ],
 		[ 0.5, yy, 180, -60 ],
-		[ -0.5, -yy, 0, 120 ],
 		[ 0.5, -yy, 60, 180 ]
-	];
-	rosace.forEach((List<num> r) {
-		pdf..arc(500 + r[0]*50, 200 + r[1]*50, 50, r[2], r[3])
-			..terminatePath(PDF.STROKE);
-	});
+	], PDF.FILL_STROKE);
+	rosace(pdf, 500, 200, 50, [
+		[ 1, 0, 120, 240 ],
+		[ -0.5, -yy, 0, 120 ],
+		[ -0.5, yy, -120, 0 ]
+	], PDF.FILL_STROKE);
 
 	var image1 = pdf.loadImage("chabenet.jpg");
 	var image2 = pdf.loadImage("chabenet.png");
@@ -70,6 +80,13 @@ void main() {
 	pdf.endPage();
 
 	pdf.close();
+}
+
+void rosace(PDF pdf, num x, num y, num r, List<List<num>> specs, what) {
+	specs.forEach((List<num> spec) {
+		pdf.arc(x + spec[0]*r, y + spec[1]*r, r, spec[2], spec[3]);
+	});
+	pdf.terminatePath(what);
 }
 
 void etoile(PDF pdf, num x, num y, what) {

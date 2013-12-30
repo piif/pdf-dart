@@ -47,6 +47,7 @@ void main() {
 	pdf.setLineWidth(10.0);
 
 	pdf..circle(35, 70, 20)
+		..lineTo(15, 70)
 		..terminatePath(PDF.STROKE);
 	pdf..circle(35, 70, 10)
 		..terminatePath(PDF.FILL);
@@ -65,21 +66,46 @@ void main() {
 	pdf..save()
 		..translate(175, 70);
 
-	rosace(pdf, 20, PDF.STROKE);
-	pdf.rotate(60);
-	rosace(pdf, 20, PDF.STROKE);
+		pdf.setLineStyle(cap: PDF.CAP_ROUND, join: PDF.JOIN_ROUND);
 
-	pdf.rotate(30);
+		rosace(pdf, 20, PDF.STROKE);
+		pdf.rotate(60);
+		rosace(pdf, 20, PDF.STROKE);
 
-	rosace(pdf, 25, PDF.FILL_STROKE);
-	pdf.rotate(60);
-	rosace(pdf, 25, PDF.FILL_STROKE);
+		pdf.rotate(30);
+
+		rosace(pdf, 25, PDF.FILL_STROKE);
+		pdf.rotate(60);
+		rosace(pdf, 25, PDF.FILL_STROKE);
 
 	pdf..restore();
+
+	pdf.setLineStyle(width: 5.0);
+
+	pdf.setLineStyle(cap: PDF.CAP_BUTT, join: PDF.JOIN_BEVEL);
+	line(pdf, 35);
+	pdf.setLineStyle(cap: PDF.CAP_ROUND, join: PDF.JOIN_ROUND);
+	line(pdf, 25);
+	pdf.setLineStyle(cap: PDF.CAP_SQUARE, join: PDF.JOIN_MITER);
+	line(pdf, 15);
+
+	pdf.setColor("stroke", 1, 1, 1);
+	pdf.setLineStyle(width: 0.5, cap: PDF.CAP_BUTT, join: PDF.JOIN_MITER);
+	line(pdf, 35);
+	line(pdf, 25);
+	line(pdf, 15);
 
 	pdf.endPage();
 
 	pdf.close();
+}
+
+void line(PDF pdf, num y) {
+	pdf..moveTo(55, y)
+		..lineTo(70, y + 15)
+		..lineTo(85, y)
+		..lineTo(100, y)
+		..terminatePath(PDF.STROKE);
 }
 
 void rosace(PDF pdf, num r, what) {

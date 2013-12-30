@@ -44,6 +44,13 @@ class PDF {
 	static final int FILL_STROKE = 3;
 	static final int CLOSE = 4;
 
+	static final int JOIN_MITER = 0;
+	static final int JOIN_ROUND = 1;
+	static final int JOIN_BEVEL = 2;
+	static final int CAP_BUTT   = 0;
+	static final int CAP_ROUND  = 1;
+	static final int CAP_SQUARE = 2;
+
 	double _unit = unitName["point"];
 
 	/**
@@ -216,10 +223,25 @@ class PDF {
 	}
 
 	/**
-	 * Set current stroke width
+	 * @deprecated use {@see setLineStyle}(width: ...) instead
 	 */
 	void setLineWidth(num width) {
 		_doCall("setLineWidth", () { return [width / _unit]; });
+	}
+
+	/**
+	 * Set current line style
+	 */
+	void setLineStyle({ num width, int join, int cap }) {
+		if (width != null) {
+			_doCall("setLineWidth", () { return [width / _unit]; });
+		}
+		if (join != null) {
+			_doCall("setLineJoin", [join]);
+		}
+		if (cap != null) {
+			_doCall("setLineCap", [cap]);
+		}
 	}
 
 	/**
@@ -311,12 +333,12 @@ class PDF {
 			if (args is Function) {
 				args = (args as Function)();
 			}
-//			print("calling ${command}");
 			ReceivePort response = new ReceivePort();
 			List callArgs = [response.sendPort, command, handle ];
 			if (args != null) {
 				callArgs.addAll(args);
 			}
+//			print("calling ${callArgs}");
 			_servicePort.send(callArgs);
 			return response.first;
  		}).then((List result) {

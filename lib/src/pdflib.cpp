@@ -375,7 +375,7 @@ BEGIN_ASYNC_FUNCTION(pdflibServicePort) {
 
 	} else if (strcmp("setLineWidth", name) == 0) {
 		if (argc != 2) {
-			SET_ERROR("lineTo: handle, width expected");
+			SET_ERROR("setLineWidth: handle, width expected");
 			RETURN_ASYNC_FUNCTION;
 		}
 		PDF *pdf = getPdf(argv[0]);
@@ -383,6 +383,34 @@ BEGIN_ASYNC_FUNCTION(pdflibServicePort) {
 
 		PDF_TRY(pdf) {
 			PDF_setlinewidth(pdf, lineWidth);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
+
+	} else if (strcmp("setLineJoin", name) == 0) {
+		if (argc != 2) {
+			SET_ERROR("setLineJoin: handle, join expected");
+			RETURN_ASYNC_FUNCTION;
+		}
+		PDF *pdf = getPdf(argv[0]);
+		GET_INT(lineJoin, argv[1]);
+
+		PDF_TRY(pdf) {
+			PDF_setlinejoin(pdf, lineJoin);
+		} PDF_CATCH(pdf) {
+			SET_ERROR(PDF_get_errmsg(pdf));
+		}
+
+	} else if (strcmp("setLineCap", name) == 0) {
+		if (argc != 2) {
+			SET_ERROR("setLineCap: handle, cap expected");
+			RETURN_ASYNC_FUNCTION;
+		}
+		PDF *pdf = getPdf(argv[0]);
+		GET_INT(lineCap, argv[1]);
+
+		PDF_TRY(pdf) {
+			PDF_setlinecap(pdf, lineCap);
 		} PDF_CATCH(pdf) {
 			SET_ERROR(PDF_get_errmsg(pdf));
 		}
